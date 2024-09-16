@@ -1,4 +1,4 @@
-﻿using MassTransit;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,42 +19,43 @@ namespace Tne.WorkflowCore
     {
         private readonly IWorkflowHost workflowHost;
         private readonly IWorkflowRepository workflowRepository;
-        readonly IPublishEndpoint _publishEndpoint;
+        
 
 
-        public HomeController(IWorkflowHost workflowHost, IWorkflowRepository workflowRepository, IPublishEndpoint publishEndpoint)
+        public HomeController(IWorkflowHost workflowHost, IWorkflowRepository workflowRepository)
         {
             this.workflowHost = workflowHost;
             this.workflowRepository = workflowRepository;
-            _publishEndpoint = publishEndpoint;
+            
         }
 
         /// <summary>
-        /// Получить все активные workflows
+        /// РџРѕР»СѓС‡РёС‚СЊ РІСЃРµ Р°РєС‚РёРІРЅС‹Рµ workflows
         /// </summary>        
         // [HttpGet("Index")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var instances = await workflowRepository.GetWorkflowInstances(WorkflowStatus.Runnable, null, DateTime.Now.Date, DateTime.Now.Date.AddDays(1), 0, 10);
+            var instances = await workflowRepository.GetWorkflowInstances(WorkflowStatus.Runnable, null, DateTime.UtcNow.Date, DateTime.UtcNow.Date.AddDays(1), 0, 10);
             return Ok(instances);
         }
 
         /// <summary>
-        /// Запустить workflow ApprovalWorkflow
+        /// Р—Р°РїСѓСЃС‚РёС‚СЊ workflow ApprovalWorkflow
         /// </summary>
-        [HttpPost("Init")]
-        public async Task<IActionResult> Init(ApprovalInitDto dto)
+        [HttpGet("Init")]
+        private async Task<IActionResult> Init(/*[FromQuery]ApprovalInitDto dto*/)
         {
 
-            ApprovalData data = new ApprovalData { OrganisationName = dto.OrganisationName, Url = dto.Url };
-            var workflowId = await workflowHost.StartWorkflow(nameof(ApprovalWorkflow), data);
+            // ApprovalData data = new ApprovalData { OrganisationName = dto.OrganisationName, Url = dto.Url };
+            ApprovalData data = new ApprovalData { OrganisationName = "РћРћРћ Р РѕРіР° Рё РєРѕРїС‹С‚Р°", Url = "https://gsdhf.ru" };
+            var workflowId = await workflowHost.StartWorkflow(nameof(ApprovalWorkflowV2));
 
             return Ok(workflowId);
         }
 
         /// <summary>
-        /// Запустить событие ApprovalEvent для ApprovalWorkflow 
+        /// Р—Р°РїСѓСЃС‚РёС‚СЊ СЃРѕР±С‹С‚РёРµ ApprovalEvent РґР»СЏ ApprovalWorkflow 
         /// </summary>
         [HttpPost("Approve")]
         public async Task<IActionResult> Approve(ApprovalFinalDto dto)
@@ -65,12 +66,12 @@ namespace Tne.WorkflowCore
         }
 
         /// <summary>
-        /// Запустить событие в шину, а оттуда уже ApprovalEvent для ApprovalWorkflow 
+        /// Р—Р°РїСѓСЃС‚РёС‚СЊ СЃРѕР±С‹С‚РёРµ РІ С€РёРЅСѓ, Р° РѕС‚С‚СѓРґР° СѓР¶Рµ ApprovalEvent РґР»СЏ ApprovalWorkflow 
         /// </summary>
         [HttpPost("PublishInit")]
         public async Task PublishInit(ApprovalInitDto dto)
         {
-            await _publishEndpoint.Publish<ApprovalInitDto>(dto);
+         //   await _publishEndpoint.Publish<ApprovalInitDto>(dto);
 
         }
 

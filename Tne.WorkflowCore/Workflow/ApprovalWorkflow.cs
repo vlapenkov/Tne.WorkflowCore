@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
 
@@ -15,13 +15,14 @@ namespace Tne.WorkflowCore
             builder
                 .StartWith(context => ExecutionResult.Next())
 
-                .Then<SearchResponsibleStep>() // поиск ответственного
+                .Then<SearchResponsibleStep>() 
                     .Output(data => data.ApprovedBy, step => step.Responsible)
+                    .OnError(WorkflowErrorHandling.Retry, TimeSpan.FromMinutes(10))
 
-                .Then<SendMailStep>() // отправка почты
+                .Then<SendMailStep>() // РѕС‚РїСЂР°РІРєР° РїРѕС‡С‚С‹
                     .Input(step => step.Responsible, data => data.ApprovedBy)
 
-                .WaitFor("ApprovalEvent", (data, context) => context.Workflow.Id, data => DateTime.Now) // получение события обработки
+                .WaitFor("ApprovalEvent", (data, context) => context.Workflow.Id, data => DateTime.Now) // РїРѕР»СѓС‡РµРЅРёРµ СЃРѕР±С‹С‚РёСЏ РѕР±СЂР°Р±РѕС‚РєРё
                     .Output(data => data.ApprovalStatus, step => step.EventData)
 
                 .Then<ApprovalStep>()
@@ -34,6 +35,7 @@ namespace Tne.WorkflowCore
                  Console.WriteLine("Workflow complete");
                  return ExecutionResult.Next();
              });
+            
         }
     }
 }
