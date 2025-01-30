@@ -1,4 +1,5 @@
 using System;
+using Tne.WorkflowCore.Workflow.SecondWorkflow.Steps;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
 
@@ -6,9 +7,14 @@ namespace Tne.WorkflowCore
 {
     public class ApprovalWorkflowV2 : IWorkflow
     {
-        public string Id => "ApprovalWorkflowV2";
+        public string Id => "ApprovalWorkflow";
 
         public int Version => 2;
+
+        public string? Description => throw new NotImplementedException();
+
+
+        //public string? Description => "Депозиты, Кредиты, МБК";
 
 
         public void Build(IWorkflowBuilder<object> builder)
@@ -16,7 +22,7 @@ namespace Tne.WorkflowCore
             builder
                 .StartWith(context => ExecutionResult.Next())
 
-                .Then<SearchResponsibleStep>()
+                .Then<Step3>()
                 //.OnError(WorkflowErrorHandling.Terminate)                    
 
                 .Then<SendMailStep>()
@@ -28,7 +34,8 @@ namespace Tne.WorkflowCore
 
             .Then(context =>
             {
-                Console.WriteLine("Workflow complete");
+                
+                Console.WriteLine($"Workflow {context.Workflow.WorkflowDefinitionId} Version={context.Workflow.Version} complete");
                 return ExecutionResult.Next();
             });
 
@@ -39,16 +46,16 @@ namespace Tne.WorkflowCore
             builder.StartWith(context => ExecutionResult.Next()).
                     Parallel()
                     .Do(then =>
-                        then.StartWith<SearchResponsibleStep>()
+                        then.StartWith<Step3>()
 
                             .Then<SendMailStep>())
 
                     .Do(then =>
-                        then.StartWith<SearchResponsibleStep>()
+                        then.StartWith<Step3>()
 
                             .Then<SendMailStep>())
                     .Do(then =>
-                        then.StartWith<SearchResponsibleStep>()
+                        then.StartWith<Step3>()
 
                             .Then<SendMailStep>())
                 .Join()

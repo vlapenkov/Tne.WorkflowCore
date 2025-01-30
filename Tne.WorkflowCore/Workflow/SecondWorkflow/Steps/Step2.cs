@@ -1,18 +1,18 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
 
-namespace Tne.WorkflowCore
+namespace Tne.WorkflowCore.Workflow.SecondWorkflow.Steps
 {
-    public class SendMailStep : StepBodyAsync
+    public class Step2 : StepBodyAsync
     {
         public string Responsible { get; set; }
 
         public override async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
-            await Task.Delay(1000);
-            Console.WriteLine($"Sent e-mail to responsible {Responsible}");
+            await Task.Delay(10_000);
+            Console.WriteLine($"{context.Workflow.Id} Step2");
             return ExecutionResult.Next();
 
         }

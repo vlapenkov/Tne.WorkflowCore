@@ -4,14 +4,24 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a7cfd816-f0af-4fd4-8602-53c02ef77b96</UserSecretsId>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="WorkflowCore" Version="3.11.0" />
-    <PackageReference Include="WorkflowCore.Persistence.PostgreSQL" Version="3.11.0" />
+    <!--<PackageReference Include="WorkflowCore" Version="3.11.0" />
+    <PackageReference Include="WorkflowCore.Persistence.PostgreSQL" Version="3.11.0" />-->
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.4" />
     <PackageReference Include="Polly" Version="8.4.1" />
+    <PackageReference Include="Serilog" Version="4.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     
+  </ItemGroup>
+
+  <ItemGroup>
+  <ProjectReference Include="C:\DotNetProjects\workflow-core\src\WorkflowCore\WorkflowCore.csproj" />
+  <ProjectReference Include="C:\DotNetProjects\workflow-core\src\providers\WorkflowCore.Persistence.EntityFramework\WorkflowCore.Persistence.EntityFramework.csproj" />
+  <ProjectReference Include="C:\DotNetProjects\workflow-core\src\providers\WorkflowCore.Persistence.PostgreSQL\WorkflowCore.Persistence.PostgreSQL.csproj" />
   </ItemGroup>
 
 </Project>

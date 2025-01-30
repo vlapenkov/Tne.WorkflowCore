@@ -44,12 +44,15 @@ namespace Tne.WorkflowCore
         /// Р—Р°РїСѓСЃС‚РёС‚СЊ workflow ApprovalWorkflow
         /// </summary>
         [HttpGet("Init")]
-        private async Task<IActionResult> Init(/*[FromQuery]ApprovalInitDto dto*/)
+        private async Task<IActionResult> Init()
         {
+            
+            ApprovalData data = new ApprovalData { OrganisationName = "Организация1", Url = "https://gsdhf.ru" };
 
-            // ApprovalData data = new ApprovalData { OrganisationName = dto.OrganisationName, Url = dto.Url };
-            ApprovalData data = new ApprovalData { OrganisationName = "РћРћРћ Р РѕРіР° Рё РєРѕРїС‹С‚Р°", Url = "https://gsdhf.ru" };
-            var workflowId = await workflowHost.StartWorkflow(nameof(ApprovalWorkflowV2));
+            
+            //var workflowId = await workflowHost.StartWorkflow(nameof(ApprovalWorkflowV2));
+
+            var workflowId = await workflowHost.StartWorkflow("ApprovalWorkflow", 2);
 
             return Ok(workflowId);
         }
